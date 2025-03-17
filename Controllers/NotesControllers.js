@@ -22,6 +22,7 @@ export const addNote = (req, res) => {
 }
 
 export const updateNote = (req, res) => {
+    
     res.json({
         message: `Update note by id ${req.params.id}`
     })

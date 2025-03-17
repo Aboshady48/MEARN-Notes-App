@@ -1,11 +1,14 @@
 import express from 'express';
-import dotenv from "dotenv"
 import morgan from 'morgan';
 import NotesRoutes from "./Routes/Notes.js";
+import dotenv from 'dotenv';
+import { CreateDb } from './config/db.js';
 
-dotenv.config({
-    path: './config/.env'
-})
+
+dotenv.config(
+    { path: './config/config.env' }
+);
+
 
 const app = express()
 const port = 3000;
@@ -20,6 +23,7 @@ app.get('/', (req, res) => {
 // Routes
 app.use("/api/v1/notes", NotesRoutes);
 
+CreateDb()
 app.listen(port, ()=>{
     console.log(`Server is running up at URL : http://localhost:${port}`);
 })
