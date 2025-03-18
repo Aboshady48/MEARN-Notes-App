@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import NotesRoutes from "./Routes/Notes.js";
 import dotenv from 'dotenv';
 import { CreateDb } from './config/db.js';
+import UsersRoutes from "./Routes/UsersRoutes.js";
 
 
 dotenv.config(
@@ -22,6 +23,7 @@ app.get('/', (req, res) => {
 
 // Routes
 app.use("/api/v1/notes", NotesRoutes);
+app.use("/api/v1/users", UsersRoutes);
 
 CreateDb()
 app.listen(port, ()=>{
