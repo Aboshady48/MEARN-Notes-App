@@ -11,6 +11,49 @@ const generateToken = (id) => {
 };
 
 export const Login = async (req, res) => {
+    const {email, password} = req.body;
+    if (!email || !password) {
+        return res.status(400).json({
+            success: false,
+            message: "Please provide email and password",
+        });
+    }
+    if(!validator.isEmail(email)) {
+        return res.status(400).json({
+            success: false,
+            message: "Invalid email",
+        });
+    }
+    try {
+        const userExists = await User.findOne({email})
+        if (!userExists) {
+            return res.status(404).json({
+                success: false,
+                message: "Invaild Credantial",
+                status: 404,
+            });
+        }
+        const isMatch = await bcrypt.compare(password, userExists.password)
+        if (!isMatch) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid credentials",
+                status: 401,
+            });
+        }
+        const token = generateToken(userExists._id);
+        res.json({
+            success: true,
+            token,
+        });
+        
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            error: error.message || "Server Error",
+        });
+        
+    }
 };
 
 export const Register = async (req, res) => {
