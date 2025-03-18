@@ -4,7 +4,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon server.js"
+    "start": "nodemon index.js"
+  },
+  "engines": {
+    "node": "v23.7.0"
   },
   "repository": {
     "type": "git",
