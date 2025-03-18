@@ -6,7 +6,7 @@ router.route("/register")
 .post(Register)
 
 // router.get("/:id", getNoteById);
-router.route("login")
+router.route("/login")
 .post(Login)
 
 

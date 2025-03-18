@@ -1,9 +1,11 @@
 import Note from "../Model/NoteScheme.js";
 import mongoose from "mongoose"; 
+ 
 
 export const getAllNotes = async (req, res) => {
+    const userID = req.userID;
     try {
-        const notes = await Note.find();
+        const notes = await Note.find({ userID });
         res.status(200).json({
             success: true,
             data: notes,
@@ -46,9 +48,13 @@ export const getNoteById = async (req, res) => {
 
 
 export const addNote = async (req, res) => {
+    const userID = req.userID
 
     try {
-        const note = new Note(req.body);
+        const note = new Note({
+            ...req.body,
+            user: userID,
+        });
         await note.save();
 
         res.status(201).json({

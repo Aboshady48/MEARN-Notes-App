@@ -8,7 +8,6 @@ const NoteSchema = new mongoose.Schema({
   title: {
     type: String,
     required: [true, "Title is required."],
-    unique: true,
     minlength: 5,
     maxlength: 50,
     trim: true,
@@ -29,5 +28,7 @@ const NoteSchema = new mongoose.Schema({
     required: true,
   },
 });
+
+NoteSchema.index({ userID: 1, title: 1 }, { unique: true });
 
 export default mongoose.model("Note", NoteSchema);

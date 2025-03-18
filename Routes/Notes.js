@@ -1,6 +1,10 @@
 import express from 'express';
-const router = express.Router()
 import { getAllNotes, getNoteById, addNote, updateNote, deleteNote } from "../Controllers/NotesControllers.js";
+import { requireAuth } from '../Middlewares/requireAuth.js';
+
+const router = express.Router()
+
+router.use(requireAuth);
 
 router.route("/")
 .get(getAllNotes)
@@ -9,8 +13,8 @@ router.route("/")
 // router.get("/:id", getNoteById);
 router.route("/:id")
 .get(getNoteById)
-.delete(deleteNote)
 .put(updateNote)
+.delete(deleteNote)
 
 
 export default router;
