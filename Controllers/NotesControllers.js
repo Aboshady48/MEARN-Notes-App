@@ -1,93 +1,127 @@
-import express from 'express';
-import Note from '../Model/NoteScheme.js'
+import Note from "../Model/NoteScheme.js";
+import mongoose from "mongoose"; 
 
-export const getAllNotes = async (req, res) =>{
+export const getAllNotes = async (req, res) => {
     try {
         const notes = await Note.find();
         res.status(200).json({
             success: true,
-            data: notes
-        })
-
+            data: notes,
+        });
     } catch (error) {
-        res.status(400).json({
+        res.status(500).json({
             success: false,
-            error: "Error At retriving the notes"
-        })
+            error: error.message || "Error retrieving notes",
+        });
     }
+};
 
-}
-
-export const getNoteById = async (req, res) => {
+export const getNoteById = async (req, res) => {    
     try {
-        const note = await Note.findById(req.params.id);
-        if(!note) return res.status(404).json({success: false, message: "Note not found"});
+        const { id } = req.params;
+
+        // Try finding by ObjectId first
+        let note = mongoose.Types.ObjectId.isValid(id) 
+            ? await Note.findById(id) 
+            : await Note.findOne({ userID: id });
+
+        if (!note) {
+            return res.status(404).json({
+                success: false,
+                message: "Note not found",
+            });
+        }
+
         res.status(200).json({
             success: true,
-            data: note
-        })
-        
+            data: note,
+        });
     } catch (error) {
-        res.status(400).json({
+        res.status(500).json({
             success: false,
-            error: "Error At retrieving the note"
-        })
-        
+            error: error.message || "Error retrieving the note",
+        });
     }
+};
 
-}
 
 export const addNote = async (req, res) => {
+
     try {
         const note = new Note(req.body);
         await note.save();
+
         res.status(201).json({
             success: true,
-            data: note
-        })
-        
+            data: note,
+        });
     } catch (error) {
         res.status(400).json({
             success: false,
-            error: "Error At creating the note"
-        })
-        
+            error: error.message || "Error creating the note",
+        });
     }
+};
 
-}
-
-export const updateNote =  async (req, res) => {
+export const updateNote = async (req, res) => {
     try {
-        const note = await Note.findByIdAndUpdate(req.params.id, req.body, {new: true, runValidators: true});
-        if(!note) return res.status(404).json({success: false, message: "Note not found"});
+        const { id } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid ID format",
+            });
+        }
+
+        const note = await Note.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
+        if (!note) {
+            return res.status(404).json({
+                success: false,
+                message: "Note not found",
+            });
+        }
+
         res.status(200).json({
             success: true,
-            data: note
-        })
-        
+            data: note,
+        });
     } catch (error) {
         res.status(400).json({
             success: false,
-            error: "Error At updating the note"
-        })
-        
+            error: error.message || "Error updating the note",
+        });
     }
-}
+};
 
 export const deleteNote = async (req, res) => {
     try {
-        const note = await Note.findByIdAndDelete(req.params.id);
-        if(!note) return res.status(404).json({success: false, message: "Note not found"});
+        const { id } = req.params;
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid ID format",
+            });
+        }
+
+        const note = await Note.findByIdAndDelete(id);
+        if (!note) {
+            return res.status(404).json({
+                success: false,
+                message: "Note not found",
+            });
+        }
+
         res.status(200).json({
             success: true,
-            data: note
-        })
-        
+            message: "Note deleted successfully",
+            data: note,
+        });
     } catch (error) {
-        res.status(400).json({
+        res.status(500).json({
             success: false,
-            error: "Error At deleting the note"
-        })
-        
+            error: error.message || "Error deleting the note",
+        });
     }
-}
+};
