@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(morgan('dev'));
 
 app.get('/', (req, res) => {
-    res.send('Welcome to Mern Notes App')
+    res.send('Welcome to Mern Notes App by Aboshady')
 })
 
 // Routes
