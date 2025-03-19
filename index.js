@@ -1,27 +1,32 @@
-import express from 'express';
-import morgan from 'morgan';
+import express from "express";
+import morgan from "morgan";
 import NotesRoutes from "./Routes/Notes.js";
-import dotenv from 'dotenv';
-import { CreateDb } from './config/db.js';
+import dotenv from "dotenv";
+import { CreateDb } from "./config/db.js";
 import UsersRoutes from "./Routes/UsersRoutes.js";
-import cors from 'cors';
+import cors from "cors";
 
+dotenv.config({ path: "./config/config.env" });
 
-dotenv.config(
-    { path: './config/config.env' }
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.use(
+  cors({
+    origin: "*", // Allows requests from anywhere
+    methods: "GET,POST,PUT,DELETE",
+    allowedHeaders: "Content-Type,Authorization",
+  })
 );
 
-
-const app = express()
-const port = 3000 || process.env.PORT;
-
 app.use(express.json());
-app.use(morgan('dev'));
+app.use(morgan("dev"));
+
 app.get("/", (req, res) => {
   res.send(`
         <html>
             <head>
-                <title>Welcome to Mern Notes App</title>
+                <title>Welcome to MERN Notes App</title>
                 <style>
                     body {
                         font-family: Arial, sans-serif;
@@ -76,20 +81,11 @@ app.get("/", (req, res) => {
     `);
 });
 
-// Routes
+// ✅ Define Routes AFTER enabling CORS
 app.use("/api/v1/notes", NotesRoutes);
 app.use("/api/v1/users", UsersRoutes);
 
-// Enable CORS
-app.use(
-  cors({
-    origin: "*", // Allows all origins
-    methods: "GET,POST,PUT,DELETE",
-    allowedHeaders: "Content-Type,Authorization",
-  })
-);
-
-CreateDb()
-app.listen(port, ()=>{
-    console.log(`Server is running up at URL : http://localhost:${port}`);
-})
+CreateDb();
+app.listen(port, () => {
+  console.log(`Server is running at: http://localhost:${port}`);
+});
