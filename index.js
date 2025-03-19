@@ -81,7 +81,13 @@ app.use("/api/v1/notes", NotesRoutes);
 app.use("/api/v1/users", UsersRoutes);
 
 // Enable CORS
-app.use(cors());
+app.use(
+  cors({
+    origin: "*", // Allows all origins
+    methods: "GET,POST,PUT,DELETE",
+    allowedHeaders: "Content-Type,Authorization",
+  })
+);
 
 CreateDb()
 app.listen(port, ()=>{
