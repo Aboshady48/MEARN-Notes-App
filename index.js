@@ -4,6 +4,7 @@ import NotesRoutes from "./Routes/Notes.js";
 import dotenv from 'dotenv';
 import { CreateDb } from './config/db.js';
 import UsersRoutes from "./Routes/UsersRoutes.js";
+import cors from 'cors';
 
 
 dotenv.config(
@@ -78,6 +79,9 @@ app.get("/", (req, res) => {
 // Routes
 app.use("/api/v1/notes", NotesRoutes);
 app.use("/api/v1/users", UsersRoutes);
+
+// Enable CORS
+app.use(cors());
 
 CreateDb()
 app.listen(port, ()=>{
