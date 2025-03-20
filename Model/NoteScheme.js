@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const NoteSchema = new mongoose.Schema({
   userID: {
+    // ✅ Ensuring the correct field name
     type: String,
     required: [true, "User ID is required."],
   },

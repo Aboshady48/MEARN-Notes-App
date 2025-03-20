@@ -84,7 +84,7 @@ app.get("/", (req, res) => {
     `);
 });
 
-// ✅ Define Routes (After enabling CORS)
+// ✅ Define Routes
 app.use("/api/v1/notes", NotesRoutes);
 app.use("/api/v1/users", UsersRoutes);
 
