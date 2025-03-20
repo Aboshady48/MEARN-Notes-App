@@ -11,10 +11,20 @@ dotenv.config({ path: "./config/config.env" });
 const app = express();
 const port = process.env.PORT || 3000;
 
-// ✅ Fix: Enable CORS Globally
-app.use(cors()); // Allow all origins
-app.options("*", cors()); // Handle preflight requests
+// ✅ Allow Everyone to Access the API
+app.use(
+  cors({
+    origin: "*", // Allow all origins
+    credentials: false, // No need for credentials (cookies, auth headers)
+    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
+    allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+  })
+);
 
+// ✅ Handle preflight requests
+app.options("*", cors());
+
+// Middleware
 app.use(express.json());
 app.use(morgan("dev"));
 
@@ -81,7 +91,20 @@ app.get("/", (req, res) => {
 app.use("/api/v1/notes", NotesRoutes);
 app.use("/api/v1/users", UsersRoutes);
 
+// ✅ Ensure preflight requests are handled properly for API routes
+app.use("/api/v1", (req, res, next) => {
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  if (req.method === "OPTIONS") {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
+// Connect to Database
 CreateDb();
+
+// Start the Server
 app.listen(port, () => {
   console.log(`🚀 Server is running at: http://localhost:${port}`);
 });
