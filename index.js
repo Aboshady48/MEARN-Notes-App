@@ -12,14 +12,17 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 // ✅ Allow Everyone to Access the API
+import cors from "cors";
+
 app.use(
   cors({
-    origin: "*", // Allow all origins
-    credentials: false, // No need for credentials (cookies, auth headers)
-    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
-    allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+    origin: "*", // Allow all origins (public API)
+    credentials: true, // Allow cookies and authentication headers
+    methods: ["GET", "POST", "PUT", "DELETE"], // Allow necessary HTTP methods
+    allowedHeaders: ["Content-Type", "Authorization"], // Allow required headers
   })
 );
+
 
 // ✅ Handle preflight requests
 app.options("*", cors());
