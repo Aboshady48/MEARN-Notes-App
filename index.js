@@ -11,26 +11,21 @@ dotenv.config({ path: "./config/config.env" });
 const app = express();
 const port = process.env.PORT || 3000;
 
-// ✅ Allow Everyone to Access the API
-import cors from "cors";
-
+// ✅ Enable CORS (before defining routes)
 app.use(
   cors({
-    origin: "*", // Allow all origins (public API)
-    credentials: true, // Allow cookies and authentication headers
-    methods: ["GET", "POST", "PUT", "DELETE"], // Allow necessary HTTP methods
-    allowedHeaders: ["Content-Type", "Authorization"], // Allow required headers
+    origin: "*", // Allow everyone
+    credentials: false, // Set to true if using cookies/sessions
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
-
-// ✅ Handle preflight requests
-app.options("*", cors());
-
-// Middleware
+// ✅ Middleware
 app.use(express.json());
 app.use(morgan("dev"));
 
+// ✅ Welcome Route
 app.get("/", (req, res) => {
   res.send(`
         <html>
@@ -90,24 +85,14 @@ app.get("/", (req, res) => {
     `);
 });
 
-// ✅ Define Routes AFTER enabling CORS
+// ✅ Define Routes (After enabling CORS)
 app.use("/api/v1/notes", NotesRoutes);
 app.use("/api/v1/users", UsersRoutes);
 
-// ✅ Ensure preflight requests are handled properly for API routes
-app.use("/api/v1", (req, res, next) => {
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-  next();
-});
-
-// Connect to Database
+// ✅ Connect to Database
 CreateDb();
 
-// Start the Server
+// ✅ Start the Server
 app.listen(port, () => {
   console.log(`🚀 Server is running at: http://localhost:${port}`);
 });
