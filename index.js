@@ -1,28 +1,34 @@
 import express from "express";
 import morgan from "morgan";
-import NotesRoutes from "./Routes/Notes.js";
 import dotenv from "dotenv";
-import { CreateDb } from "./config/db.js";
-import UsersRoutes from "./Routes/UsersRoutes.js";
 import cors from "cors";
 
+import NotesRoutes from "./Routes/Notes.js";
+import UsersRoutes from "./Routes/UsersRoutes.js";
+import { CreateDb } from "./config/db.js";
+
+// ✅ Load environment variables
 dotenv.config({ path: "./config/config.env" });
 
 const app = express();
 const port = process.env.PORT || 3000;
 
+// ✅ Configure CORS to allow frontend access
 app.use(
   cors({
-    origin: "http://localhost:5173", // Allow frontend to access
-    credentials: true, // Allow cookies and authentication headers
-    methods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods
-    allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 
 // ✅ Middleware
-app.use(express.json());
-app.use(morgan("dev"));
+app.use(express.json()); // Parse JSON requests
+app.use(morgan("dev")); // Logger for debugging
+
+// ✅ Connect to Database
+CreateDb();
 
 // ✅ Welcome Route
 app.get("/", (req, res) => {
@@ -84,12 +90,9 @@ app.get("/", (req, res) => {
     `);
 });
 
-// ✅ Define Routes
+// ✅ Define API Routes
 app.use("/api/v1/notes", NotesRoutes);
 app.use("/api/v1/users", UsersRoutes);
-
-// ✅ Connect to Database
-CreateDb();
 
 // ✅ Start the Server
 app.listen(port, () => {
