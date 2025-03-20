@@ -11,15 +11,7 @@ dotenv.config({ path: "./config/config.env" });
 const app = express();
 const port = process.env.PORT || 3000;
 
-// ✅ Enable CORS (before defining routes)
-app.use(
-  cors({
-    origin: "*", // Allow everyone
-    credentials: false, // Set to true if using cookies/sessions
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
-);
+app.use(cors());
 
 // ✅ Middleware
 app.use(express.json());
